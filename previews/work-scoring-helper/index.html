@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenClaw Work Scoring Helper</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07111f;
+      --panel: #0f1b2d;
+      --soft: #15243b;
+      --line: #27415f;
+      --text: #e8f1ff;
+      --muted: #9fb3cf;
+      --accent: #77e0a5;
+      --accent-2: #87b8ff;
+      --warn: #ffd166;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      background: linear-gradient(180deg, #07111f 0%, #0b1422 100%);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+    h1, h2, h3 { margin-top: 0; }
+    h1 { margin-bottom: 12px; font-size: clamp(2rem, 4vw, 3rem); }
+    p { color: var(--muted); line-height: 1.5; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .stack { display: grid; gap: 20px; }
+    .panel {
+      background: rgba(15, 27, 45, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+    }
+    .controls { display: grid; gap: 16px; }
+    .criterion, .candidate-card {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .row, .idea-row, .candidate-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .idea-row { align-items: stretch; }
+    .candidate-head { align-items: flex-start; }
+    label { font-weight: 700; }
+    small, .hint { color: var(--muted); }
+    input[type="range"] { width: 100%; margin-top: 12px; }
+    input[type="text"], textarea {
+      width: 100%;
+      background: #08111d;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+    }
+    textarea { min-height: 92px; resize: vertical; }
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--accent);
+      color: #072313;
+    }
+    button.secondary {
+      background: #1b2f4c;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    button.ghost {
+      background: transparent;
+      color: var(--accent-2);
+      border: 1px solid var(--line);
+      padding: 8px 12px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .toolbar input[type="file"] {
+      display: none;
+    }
+    .score {
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin: 8px 0 12px;
+    }
+    .badge, .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #10263a;
+      border: 1px solid var(--line);
+      color: var(--accent-2);
+      font-weight: 700;
+    }
+    .tag {
+      padding: 4px 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .list { display: grid; gap: 10px; margin-top: 16px; }
+    .idea-card {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .idea-card h3, .candidate-card h3 { margin: 0 0 6px; font-size: 1rem; }
+    .idea-meta, .candidate-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .topline { color: var(--warn); font-weight: 700; }
+    .candidate-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+      max-height: 460px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .candidate-card p { margin-bottom: 0; }
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      color: var(--muted);
+      background: rgba(21, 36, 59, 0.35);
+    }
+    @media (max-width: 960px) {
+      .grid { grid-template-columns: 1fr; }
+      .idea-row, .candidate-head { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>OpenClaw Work Scoring Helper</h1>
+    <p>Score candidate ideas using the Evolution Lab rubric, then paste backlog markdown to turn `NEXT.md` bullets into one-click candidates. It is a fast way to go from backlog to ship decision.</p>
+    <div class="grid">
+      <section class="stack">
+        <div class="panel controls">
+          <div>
+            <label for="idea">Idea title</label>
+            <input id="idea" type="text" placeholder="Example: Build a tiny browser tool for prompt diffing">
+          </div>
+          <div>
+            <label for="notes">Decision note</label>
+            <textarea id="notes" placeholder="Why this is worth shipping now, risks, or preview ideas."></textarea>
+          </div>
+          <div id="criteria"></div>
+          <div class="idea-row">
+            <button id="saveBtn">Save scored idea</button>
+            <button id="resetBtn" class="secondary">Reset sliders</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="row">
+            <div>
+              <h2>Backlog importer</h2>
+              <p>Paste markdown from `NEXT.md` or any backlog. Bullet items become candidates grouped by the nearest heading.</p>
+            </div>
+            <button id="seedBtn" class="ghost">Load sample</button>
+          </div>
+          <textarea id="backlogInput" placeholder="# Public micro-projects&#10;- Build a tiny browser tool...&#10;- Publish a minimal static demo..."></textarea>
+          <div class="idea-row" style="margin-top: 12px;">
+            <button id="parseBtn">Parse backlog</button>
+            <button id="clearBacklogBtn" class="secondary">Clear parsed candidates</button>
+          </div>
+          <div id="candidateList" class="candidate-list"></div>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="badge">Weighted score</div>
+        <div class="score" id="score">0.0</div>
+        <p id="summary" class="topline">Adjust the sliders to see whether this work is a strong next-cycle candidate.</p>
+        <div class="hint">Weights reflect the lab default: novelty 20%, feasibility 25%, demo value 20%, OpenClaw usefulness 20%, compounding autonomy value 15%.</div>
+        <div class="toolbar">
+          <button id="exportBtn" class="secondary" type="button">Export saved ideas</button>
+          <label for="importFile" class="ghost">Import saved ideas</label>
+          <input id="importFile" type="file" accept="application/json">
+        </div>
+        <p id="transferStatus" class="hint">Export or import saved ideas as JSON.</p>
+        <div class="list" id="savedIdeas"></div>
+      </aside>
+    </div>
+  </div>
+  <script>
+    const rubric = [
+      { key: 'novelty', label: 'Novelty', weight: 0.20, value: 3 },
+      { key: 'feasibility', label: 'One-cycle feasibility', weight: 0.25, value: 3 },
+      { key: 'demo', label: 'Public demo value', weight: 0.20, value: 3 },
+      { key: 'usefulness', label: 'OpenClaw usefulness', weight: 0.20, value: 3 },
+      { key: 'compound', label: 'Compounding autonomy value', weight: 0.15, value: 3 }
+    ];
+
+    const sampleBacklog = `## Public micro-project experiments\n- Build a tiny browser tool that solves one concrete developer workflow pain.\n- Publish a minimal static demo with source, README, and a screenshot or preview.\n\n## OpenClaw autonomy improvements\n- Improve cycle recording so artifacts, blockers, and previews are easier to audit.\n- Prototype a better work scoring helper for novelty, feasibility, demo value, OpenClaw usefulness, and compounding autonomy value.`;
+
+    const criteriaEl = document.getElementById('criteria');
+    const scoreEl = document.getElementById('score');
+    const summaryEl = document.getElementById('summary');
+    const savedIdeasEl = document.getElementById('savedIdeas');
+    const ideaEl = document.getElementById('idea');
+    const notesEl = document.getElementById('notes');
+    const backlogInputEl = document.getElementById('backlogInput');
+    const candidateListEl = document.getElementById('candidateList');
+    const transferStatusEl = document.getElementById('transferStatus');
+
+    function recommendation(score) {
+      if (score >= 4.2) return 'Excellent candidate. This is strong cycle material.';
+      if (score >= 3.5) return 'Promising. Worth doing unless a more urgent blocker appears.';
+      if (score >= 2.7) return 'Borderline. Tighten scope or find a sharper artifact.';
+      return 'Weak fit for a cycle. Reframe it or park it.';
+    }
+
+    function computeScore() {
+      const total = rubric.reduce((sum, item) => sum + item.value * item.weight, 0);
+      scoreEl.textContent = total.toFixed(2);
+      summaryEl.textContent = recommendation(total);
+      return total;
+    }
+
+    function renderCriteria() {
+      criteriaEl.innerHTML = '';
+      rubric.forEach((item) => {
+        const block = document.createElement('div');
+        block.className = 'criterion';
+        block.innerHTML = `
+          <div class="row">
+            <div>
+              <label for="${item.key}">${item.label}</label><br>
+              <small>Weight ${(item.weight * 100).toFixed(0)}%</small>
+            </div>
+            <strong id="${item.key}-value">${item.value}</strong>
+          </div>
+          <input id="${item.key}" type="range" min="0" max="5" step="0.5" value="${item.value}">
+        `;
+        criteriaEl.appendChild(block);
+        const input = block.querySelector('input');
+        const valueEl = block.querySelector('strong');
+        input.addEventListener('input', () => {
+          item.value = Number(input.value);
+          valueEl.textContent = input.value;
+          computeScore();
+        });
+      });
+      computeScore();
+    }
+
+    function loadSaved() {
+      return JSON.parse(localStorage.getItem('openclaw-work-ideas') || '[]');
+    }
+
+    function saveSaved(items) {
+      localStorage.setItem('openclaw-work-ideas', JSON.stringify(items));
+    }
+
+    function loadCandidates() {
+      return JSON.parse(localStorage.getItem('openclaw-work-candidates') || '[]');
+    }
+
+    function saveCandidates(items) {
+      localStorage.setItem('openclaw-work-candidates', JSON.stringify(items));
+    }
+
+    function renderSaved() {
+      const items = loadSaved().sort((a, b) => b.score - a.score);
+      savedIdeasEl.innerHTML = items.length ? '' : '<p class="hint">No saved ideas yet. Score a few candidates and keep the best.</p>';
+      items.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'idea-card';
+        card.innerHTML = `
+          <h3>${index + 1}. ${item.title}</h3>
+          <div class="topline">Score ${item.score.toFixed(2)}</div>
+          <p>${item.notes || 'No note added.'}</p>
+          <div class="idea-meta">
+            <span>${new Date(item.savedAt).toLocaleString()}</span>
+            <span>${item.breakdown.map(part => `${part.label}: ${part.value}`).join(' • ')}</span>
+          </div>
+        `;
+        savedIdeasEl.appendChild(card);
+      });
+    }
+
+    function parseBacklog(markdown) {
+      const lines = markdown.split(/\r?\n/);
+      const candidates = [];
+      let currentSection = 'General';
+
+      lines.forEach((line) => {
+        const headingMatch = line.match(/^#{1,6}\s+(.+)$/);
+        if (headingMatch) {
+          currentSection = headingMatch[1].trim();
+          return;
+        }
+
+        const bulletMatch = line.match(/^\s*[-*+]\s+(.+)$/);
+        if (bulletMatch) {
+          const text = bulletMatch[1].trim();
+          if (!text) return;
+          candidates.push({
+            title: text.replace(/\.$/, ''),
+            section: currentSection,
+            note: `Imported from ${currentSection}`
+          });
+        }
+      });
+
+      return candidates;
+    }
+
+    function useCandidate(candidate) {
+      ideaEl.value = candidate.title;
+      notesEl.value = candidate.note;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      ideaEl.focus();
+    }
+
+    function renderCandidates() {
+      const items = loadCandidates();
+      candidateListEl.innerHTML = '';
+
+      if (!items.length) {
+        candidateListEl.innerHTML = '<div class="empty">No parsed candidates yet. Paste backlog markdown and click <strong>Parse backlog</strong>.</div>';
+        return;
+      }
+
+      items.forEach((candidate, index) => {
+        const card = document.createElement('div');
+        card.className = 'candidate-card';
+        card.innerHTML = `
+          <div class="candidate-head">
+            <div>
+              <h3>${index + 1}. ${candidate.title}</h3>
+              <div class="candidate-meta"><span class="tag">${candidate.section}</span></div>
+            </div>
+            <button class="ghost" type="button">Use in scorer</button>
+          </div>
+          <p>${candidate.note}</p>
+        `;
+        card.querySelector('button').addEventListener('click', () => useCandidate(candidate));
+        candidateListEl.appendChild(card);
+      });
+    }
+
+    function setTransferStatus(message) {
+      transferStatusEl.textContent = message;
+    }
+
+    function exportSavedIdeas() {
+      const items = loadSaved();
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        app: 'openclaw-work-scoring-helper',
+        version: 1,
+        ideas: items
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `openclaw-work-ideas-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setTransferStatus(`Exported ${items.length} saved idea${items.length === 1 ? '' : 's'} as JSON.`);
+    }
+
+    async function importSavedIdeas(file) {
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        const ideas = Array.isArray(parsed) ? parsed : parsed.ideas;
+        if (!Array.isArray(ideas)) throw new Error('JSON must contain an ideas array.');
+
+        const normalized = ideas
+          .filter(item => item && typeof item === 'object')
+          .map((item) => ({
+            title: typeof item.title === 'string' && item.title.trim() ? item.title.trim() : 'Untitled idea',
+            notes: typeof item.notes === 'string' ? item.notes : '',
+            score: Number(item.score) || 0,
+            breakdown: Array.isArray(item.breakdown) ? item.breakdown : [],
+            savedAt: item.savedAt || new Date().toISOString()
+          }));
+
+        saveSaved(normalized);
+        renderSaved();
+        setTransferStatus(`Imported ${normalized.length} saved idea${normalized.length === 1 ? '' : 's'} from JSON.`);
+      } catch (error) {
+        setTransferStatus(`Import failed: ${error.message}`);
+      }
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      const title = ideaEl.value.trim() || 'Untitled idea';
+      const score = computeScore();
+      const items = loadSaved();
+      items.push({
+        title,
+        notes: notesEl.value.trim(),
+        score,
+        breakdown: rubric.map(item => ({ label: item.label, value: item.value })),
+        savedAt: new Date().toISOString()
+      });
+      saveSaved(items);
+      renderSaved();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      rubric.forEach(item => item.value = 3);
+      renderCriteria();
+    });
+
+    document.getElementById('seedBtn').addEventListener('click', () => {
+      backlogInputEl.value = sampleBacklog;
+      backlogInputEl.focus();
+    });
+
+    document.getElementById('parseBtn').addEventListener('click', () => {
+      const markdown = backlogInputEl.value.trim();
+      const parsed = parseBacklog(markdown);
+      saveCandidates(parsed);
+      renderCandidates();
+    });
+
+    document.getElementById('clearBacklogBtn').addEventListener('click', () => {
+      backlogInputEl.value = '';
+      saveCandidates([]);
+      renderCandidates();
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', exportSavedIdeas);
+
+    document.getElementById('importFile').addEventListener('change', async (event) => {
+      const [file] = event.target.files;
+      await importSavedIdeas(file);
+      event.target.value = '';
+    });
+
+    renderCriteria();
+    renderSaved();
+    renderCandidates();
+  </script>
+</body>
+</html>
