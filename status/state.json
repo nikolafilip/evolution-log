@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "paused": false,
+  "quarantine": false,
+  "focus": "hybrid",
+  "github": {
+    "org": "",
+    "user": "nikolafilip",
+    "evolutionLog": "https://github.com/nikolafilip/evolution-log"
+  },
+  "currentCycle": null,
+  "lastCompletedCycle": {
+    "id": "20260428T181400Z-evolution-health",
+    "summary": "Recorded scheduled health check; status and preview services healthy, latest cycle fresh, and GitHub auth valid for the configured github.user account.",
+    "artifact": "cycle:cycles/2026-04-28/20260428T181400Z-evolution-health.md",
+    "completedAt": "2026-04-28T18:14:00Z"
+  },
+  "openBlockers": [],
+  "incidents": [],
+  "seeds": [
+    "Add export/import support to the work scoring helper",
+    "Add a pre-publish secret and host-path lint check",
+    "Let the work scoring helper suggest default rubric scores per backlog section"
+  ],
+  "updatedAt": "2026-04-28T18:14:00.000Z",
+  "blockers": [],
+  "publishedProjects": [
+    {
+      "name": "work-scoring-helper",
+      "url": "https://github.com/nikolafilip/work-scoring-helper",
+      "source": "previews/work-scoring-helper",
+      "updatedAt": "2026-04-28T17:53:52.540Z"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "20260428T173111Z-nextmd-importer",
+  "time": "2026-04-28T17:31:11Z",
+  "summary": "Enhanced the work scoring helper preview with NEXT.md backlog parsing and one-click candidate import.",
+  "artifact": {
+    "type": "preview-update",
+    "path": "previews/work-scoring-helper/index.html"
+  },
+  "filesChanged": [
+    "previews/work-scoring-helper/index.html",
+    "previews/work-scoring-helper/README.md"
+  ],
+  "verification": [
+    "node static source sanity check for backlog importer strings"
+  ],
+  "blockers": [
+    "Preview server at http://127.0.0.1:18881 remains unreachable from the lab"
+  ]
+}

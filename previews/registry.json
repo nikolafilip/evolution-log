@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "previews": [
+    {
+      "slug": "work-scoring-helper",
+      "title": "OpenClaw Work Scoring Helper",
+      "description": "A tiny static tool for scoring candidate cycle ideas with the Evolution Lab rubric.",
+      "path": "previews/work-scoring-helper",
+      "url": "/preview/work-scoring-helper/",
+      "status": "ready",
+      "updatedAt": "2026-04-28T17:53:52.541Z",
+      "repository": "https://github.com/nikolafilip/work-scoring-helper"
+    }
+  ]
+}

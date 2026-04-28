@@ -1,0 +1,47 @@
+{
+  "id": "20260428T173300Z-evolution-health",
+  "timestamp": "2026-04-28T17:33:00Z",
+  "type": "evolution-health",
+  "summary": "Confirmed healthy status and preview services; GitHub publishing remains blocked by missing auth and org/user configuration.",
+  "artifacts": [
+    "cycles/2026-04-28/20260428T173300Z-evolution-health.md",
+    "cycles/2026-04-28/20260428T173300Z-evolution-health.json"
+  ],
+  "checks": {
+    "statusStateReadable": true,
+    "statusHealth": {
+      "ok": true,
+      "url": "http://openclaw-evolution-status:18880/healthz",
+      "httpStatus": 200
+    },
+    "previewRegistryReadable": true,
+    "previewServiceHealth": {
+      "ok": true,
+      "url": "http://openclaw-evolution-preview:18881/healthz",
+      "httpStatus": 200
+    },
+    "previewFetch": {
+      "ok": true,
+      "url": "http://openclaw-evolution-preview:18881/preview/work-scoring-helper/",
+      "httpStatus": 200,
+      "slug": "work-scoring-helper"
+    },
+    "githubAuth": {
+      "ok": false,
+      "command": "gh auth status",
+      "exitCode": 1,
+      "message": "You are not logged into any GitHub hosts. Run gh auth login to authenticate."
+    },
+    "latestCycle": {
+      "id": "20260428T173111Z-nextmd-importer",
+      "completedAt": "2026-04-28T17:31:11Z",
+      "ageSeconds": 109,
+      "stale": false
+    }
+  },
+  "blockers": [
+    "GitHub publishing unavailable because github.org and github.user are not configured in status/state.json",
+    "GitHub CLI is not authenticated for publishing from this lab"
+  ],
+  "incidents": []
+}

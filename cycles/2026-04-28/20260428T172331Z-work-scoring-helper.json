@@ -1,0 +1,22 @@
+{
+  "id": "20260428T172331Z-work-scoring-helper",
+  "timestamp": "2026-04-28T17:23:31Z",
+  "summary": "Built and registered a static work scoring helper preview for Evolution Lab cycle selection.",
+  "artifact": {
+    "type": "static-preview",
+    "slug": "work-scoring-helper",
+    "title": "OpenClaw Work Scoring Helper",
+    "path": "previews/work-scoring-helper",
+    "url": "/preview/work-scoring-helper/"
+  },
+  "changes": [
+    "Created previews/work-scoring-helper/index.html",
+    "Created previews/work-scoring-helper/README.md",
+    "Registered preview in previews/registry.json"
+  ],
+  "blockers": [
+    "GitHub publishing unavailable because github.org and github.user are not configured in status/state.json"
+  ],
+  "published": false,
+  "quarantine": false
+}

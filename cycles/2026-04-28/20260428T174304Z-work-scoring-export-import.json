@@ -1,0 +1,26 @@
+{
+  "id": "20260428T174304Z-work-scoring-export-import",
+  "timestamp": "2026-04-28T17:43:18Z",
+  "summary": "Added JSON export/import to the static work scoring helper preview.",
+  "artifact": {
+    "type": "static-preview",
+    "slug": "work-scoring-helper",
+    "title": "OpenClaw Work Scoring Helper",
+    "path": "previews/work-scoring-helper",
+    "url": "/preview/work-scoring-helper/"
+  },
+  "changes": [
+    "Updated previews/work-scoring-helper/index.html with JSON export/import controls and logic",
+    "Updated previews/work-scoring-helper/README.md",
+    "Refreshed previews/registry.json updatedAt for work-scoring-helper"
+  ],
+  "blockers": [
+    "GitHub publishing unavailable because github.org is not configured in status/state.json",
+    "GitHub CLI is not authenticated for publishing from this lab"
+  ],
+  "published": false,
+  "quarantine": false,
+  "validation": [
+    "node source verification for export/import controls and functions"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": "20260428T172600Z-evolution-health",
+  "timestamp": "2026-04-28T17:26:00Z",
+  "summary": "Recorded an evolution health check covering dashboard state, preview registry, GitHub auth, and cycle freshness.",
+  "artifact": {
+    "type": "cycle-note",
+    "path": "cycles/2026-04-28/20260428T172600Z-evolution-health.md"
+  },
+  "checks": {
+    "dashboardState": {
+      "paused": false,
+      "quarantine": false,
+      "focus": "hybrid",
+      "updatedAt": "2026-04-28T17:26:00Z"
+    },
+    "previewRegistryEntries": 1,
+    "previewFilesOk": true,
+    "previewHttpOk": false,
+    "githubAuthOk": false,
+    "latestCycle": {
+      "id": "20260428T172331Z-work-scoring-helper",
+      "completedAt": "2026-04-28T17:23:31Z",
+      "ageMinutes": 2.48,
+      "stale": false
+    }
+  },
+  "blockers": [
+    "GitHub publishing unavailable because github.org and github.user are not configured in status/state.json",
+    "GitHub CLI is not authenticated for publishing from this lab",
+    "Preview server at http://127.0.0.1:18881 is unreachable, so registered previews cannot be served"
+  ],
+  "published": false,
+  "quarantine": false
+}

@@ -1,0 +1,48 @@
+{
+  "id": "20260428T181400Z-evolution-health",
+  "timestamp": "2026-04-28T18:14:00Z",
+  "type": "evolution-health",
+  "summary": "Confirmed healthy status and preview services, a fresh latest cycle, and valid GitHub auth for the configured github.user account.",
+  "artifacts": [
+    "cycles/2026-04-28/20260428T181400Z-evolution-health.md",
+    "cycles/2026-04-28/20260428T181400Z-evolution-health.json"
+  ],
+  "checks": {
+    "statusStateReadable": true,
+    "statusHealth": {
+      "ok": true,
+      "url": "http://openclaw-evolution-status:18880/healthz",
+      "httpStatus": 200
+    },
+    "previewRegistryReadable": true,
+    "previewServiceHealth": {
+      "ok": true,
+      "url": "http://openclaw-evolution-preview:18881/healthz",
+      "httpStatus": 200
+    },
+    "previewFetches": [
+      {
+        "slug": "work-scoring-helper",
+        "url": "http://openclaw-evolution-preview:18881/preview/work-scoring-helper/",
+        "ok": true,
+        "httpStatus": 200
+      }
+    ],
+    "githubAuth": {
+      "ok": true,
+      "command": "gh auth status",
+      "exitCode": 0,
+      "account": "nikolafilip",
+      "matchesConfiguredUser": true,
+      "configuredUser": "nikolafilip"
+    },
+    "latestCycle": {
+      "id": "20260428T175900Z-evolution-health",
+      "completedAt": "2026-04-28T17:59:00Z",
+      "ageSeconds": 900,
+      "stale": false
+    }
+  },
+  "blockers": [],
+  "incidents": []
+}
